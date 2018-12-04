@@ -19,7 +19,7 @@ Definitely submit some issues and pull requests if you want.
 - user levels (admin, room manager, general user)
 - bots (all functionallity should be available via chat)
 
-Check out the [Projects](https://github.com/ShannonTully/super-cool-chat/projects). and [Issues](https://github.com/ShannonTully/super-cool-chat/issues).
+Check out the [Projects](https://github.com/ShannonTully/super-cool-chat/projects) and [Issues](https://github.com/ShannonTully/super-cool-chat/issues).
 
 
 ## Contributing
