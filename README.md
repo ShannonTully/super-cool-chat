@@ -20,6 +20,9 @@ Definitely submit some issues and pull requests if you want.
 - bots (all functionallity should be available via chat)
 
 
-## Contact
+## Contributing
+Anyone can contibute just checkout the [CONTRIBUTING.md](https://github.com/ShannonTully/super-cool-chat/blob/master/CONTRIBUTING.md) for information.
 
+
+## Contact
 Email me at scatman.st@gmail.com if you need to get in touch.
