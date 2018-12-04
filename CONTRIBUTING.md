@@ -1,6 +1,7 @@
 # How to Contribute
 - Submit some pull requests
 - Submit some issues
+- Use Python 3.6 and Pep8/Flake8
 - Email me at scatman.st@gmail.com
 - Be a cool person
 
