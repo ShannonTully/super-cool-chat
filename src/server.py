@@ -43,12 +43,16 @@ class ChatServer(threading.Thread):
                 if data:
                     self.parse(data, user_id)
                 else:
-                    import pdb; pdb.set_trace()
+                    for client in self.client_pool:
+                        if client.user_id == user_id:
+                            client.connection.sendall(bytes('Bye', 'utf-8'))
+                            client.connection.close()
+                            break
             except OSError:
-                print('Thread broken')
-                import pdb; pdb.set_trace()
+                break
 
     def parse(self, data, user_id):
+        hit = False
         for client in self.client_pool:
             if client.user_id == user_id:
                 sender = client
@@ -58,20 +62,24 @@ class ChatServer(threading.Thread):
             user_command = re.search(r'!.+?\b', data).group()
 
             if user_command == '!quit':
+                hit = True
                 self.client_pool.remove(sender)
                 data = bytes(sender.username + ' has left.\n', 'utf-8')
                 [client.connection.sendall(data) for client in self.client_pool if len(self.client_pool)]
                 sender.connection.close()
 
             if user_command == '!help':
+                hit = True
                 sender.connection.sendall(bytes(help_string, 'utf-8'))
 
             if user_command == '!list':
+                hit = True
                 sender.connection.sendall(bytes('Users:\n', 'utf-8'))
                 for client in self.client_pool:
                     sender.connection.sendall(bytes(client.username + '\n', 'utf-8'))
 
             if user_command == '!username':
+                hit = True
                 username = data.split(' ')
                 if len(username) == 2:
                     everyone_but_sender = []
@@ -87,6 +95,7 @@ class ChatServer(threading.Thread):
                     sender.connection.sendall(bytes('Please enter !username <username>.\n', 'utf-8'))
 
             if user_command == '!dm':
+                hit = True
                 message = data.split(' ')
                 if len(message) < 3:
                     sender.connection.sendall(bytes('Please enter !dm <username> <message>.\n', 'utf-8'))
@@ -97,7 +106,7 @@ class ChatServer(threading.Thread):
                             return
                     sender.connection.sendall(bytes('User not found.\n', 'utf-8'))
 
-        else:
+        if not hit:
             data = bytes(sender.username + ': ' + data, 'utf-8')
             everyone_but_sender = []
             for client in self.client_pool:
