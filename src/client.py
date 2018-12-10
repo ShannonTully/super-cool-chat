@@ -11,6 +11,7 @@ class Client:
         self.username = self.user_id
         self.connection = connection
         self.address = address
+        self.validated = False
 
     def __str__(self):
         return f'Client: {self.user_id}'

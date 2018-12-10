@@ -6,7 +6,7 @@ import sys
 import re
 
 
-PORT = 4444
+PORT = 8000
 
 
 class ChatServer(threading.Thread):
@@ -30,6 +30,7 @@ class ChatServer(threading.Thread):
         self.server.listen(10)
 
     def run_thread(self, user_id, username, connection, address):
+        end_state = 'close'
         print(f'{username} connected at {address[0]}:{address[1]}')
         data = bytes(username + ' has joined\n', 'utf-8')
         [client.connection.sendall(data) for client in self.client_pool if len(self.client_pool)]
@@ -41,10 +42,18 @@ class ChatServer(threading.Thread):
             try:
                 data = connection.recv(4096).decode()
                 if data:
-                    self.parse(data, user_id)
+                        end_state = self.parse(data, user_id)
                 else:
                     for client in self.client_pool:
                         if client.user_id == user_id:
+                            self.client_pool.remove(client)
+                            client.connection.sendall(bytes('Bye', 'utf-8'))
+                            client.connection.close()
+                            break
+                if end_state == 'close':
+                    for client in self.client_pool:
+                        if client.user_id == user_id:
+                            self.client_pool.remove(client)
                             client.connection.sendall(bytes('Bye', 'utf-8'))
                             client.connection.close()
                             break
@@ -57,6 +66,15 @@ class ChatServer(threading.Thread):
             if client.user_id == user_id:
                 sender = client
                 break
+
+        if not sender.validated:
+            import pdb; pdb.set_trace()
+            if data != 'catsrcoolmeow\n':
+                sender.connection.sendall(bytes('Please enter the right password.', 'utf-8'))
+                sender.connection.close()
+                return 'close'
+            else:
+                sender.validated = True
 
         if data[0] == '!' and data[1] != ' ':
             user_command = re.search(r'!.+?\b', data).group()
