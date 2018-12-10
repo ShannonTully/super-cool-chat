@@ -68,7 +68,7 @@ class ChatServer(threading.Thread):
                 break
 
         if not sender.validated:
-            import pdb; pdb.set_trace()
+            # import pdb; pdb.set_trace()
             if data != 'catsrcoolmeow\n':
                 sender.connection.sendall(bytes('Please enter the right password.', 'utf-8'))
                 sender.connection.close()
