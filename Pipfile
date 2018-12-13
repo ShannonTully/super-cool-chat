@@ -7,6 +7,12 @@ verify_ssl = true
 
 [packages]
 pytest = "*"
+flask = "*"
+flask-migrate = "*"
+flask-sqlalchemy = "*"
+flask-socketio = "*"
+psycopg2 = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.6"
