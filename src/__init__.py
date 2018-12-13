@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_socketio import SocketIO
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -14,5 +15,6 @@ app.config.from_mapping(
     SQLALCHEMY_TRACK_MODIFICATIONS=False
 )
 
+socketio = SocketIO(app)
 
 from . import routes, models

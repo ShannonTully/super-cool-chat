@@ -5,10 +5,10 @@ from .words import animals, adjectives
 from sqlalchemy.exc import IntegrityError
 from random import choice
 from uuid import uuid4
-import socketio
+# import socketio
 import json
 
-sio = socketio.AsyncServer()
+# sio = socketio.AsyncServer()
 
 
 @app.route('/')
