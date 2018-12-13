@@ -1,3 +1,4 @@
+# from . import models
 from flask import Flask
 from flask_socketio import SocketIO
 import os
@@ -17,4 +18,17 @@ app.config.from_mapping(
 
 socketio = SocketIO(app)
 
-from . import routes, models
+
+# @socketio.on('connect', namespace='/connect')
+# def connect(sid, data):
+#     return 'wut'
+
+
+@socketio.on('aaa')
+def test_connect():
+    print("Welcome, aaa received")
+    socketio.emit('aaa_response', {'data': 'Server'})
+
+
+if __name__ == "__main__":
+    socketio.run(app, PORT=8000)
