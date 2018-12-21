@@ -1,33 +1,24 @@
-from client import Client
-from imports import help_string
-import threading
-import socket
-import sys
-import re
+#!/usr/bin/env python
 
+# Copyright (c) Twisted Matrix Laboratories.
+# See LICENSE for details.
+
+from client import EchoClient
+from twisted.internet.protocol import Protocol, Factory
+from twisted.internet import reactor
+
+# Protocol Implementation
 
 PORT = 8000
 
 
-class ChatServer(threading.Thread):
-    def __init__(self, port, host='localhost'):
-        super().__init__(daemon=True)
-        self.port = port
-        self.host = host
-        self.server = socket.socket(
-            socket.AF_INET,
-            socket.SOCK_STREAM,
-            socket.IPPROTO_TCP,
-        )
-        self.client_pool = []
-
-        try:
-            self.server.bind((self.host, self.port))
-        except socket.error:
-            print(f'Bind failed. {socket.error}')
-            sys.exit()
-
-        self.server.listen(10)
+# This is just about the simplest possible protocol
+class Echo(Protocol):
+    def dataReceived(self, data):
+        """
+        As soon as any data is received, write it back.
+        """
+        self.transport.write(data)
 
     def run_thread(self, user_id, username, connection, address):
         end_state = 'close'
@@ -132,25 +123,26 @@ class ChatServer(threading.Thread):
                     everyone_but_sender.append(client)
             [client.connection.sendall(data) for client in everyone_but_sender if len(everyone_but_sender)]
 
-    def run(self):
-        print(f'Server running on {self.host}:{self.port}.')
+    # def run(self):
+    #     print(f'Server running on {self.host}:{self.port}.')
 
-        while True:
-            connection, address = self.server.accept()
-            client = Client(connection=connection, address=address)
-            self.client_pool.append(client)
-            threading.Thread(
-                target=self.run_thread,
-                args=(client.user_id, client.username, client.connection, client.address),
-                daemon=True,
-            ).start()
+    #     while True:
+    #         connection, address = self.server.accept()
+    #         client = Client(connection=connection, address=address)
+    #         self.client_pool.append(client)
+    #         threading.Thread(
+    #             target=self.run_thread,
+    #             args=(client.user_id, client.username, client.connection, client.address),
+    #             daemon=True,
+    #         ).start()
+
+
+def main():
+    f = Factory()
+    f.protocol = Echo
+    reactor.listenTCP(8000, f)
+    reactor.run()
 
 
 if __name__ == '__main__':
-    server = ChatServer(PORT)
-
-    try:
-        server.run()
-    except KeyboardInterrupt:
-        [client.connection.close() for client in server.client_pool if len(server.client_pool)]
-        sys.exit()
+    main()
