@@ -1,20 +1,16 @@
-import random
-import uuid
-
-
-class Client:
-    """
-    The Client class for connecting clients to the server.
-    """
-    def __init__(self, connection=None, address=None):
-        self.user_id = str(uuid.uuid4())
-        self.username = self.user_id
-        self.connection = connection
-        self.address = address
-        self.validated = False
-
-    def __str__(self):
-        return f'Client: {self.user_id}'
-
-    def __repr__(self):
-        return f'Client: {self.user_id}'
+# Import socket module 
+import socket                
+  
+# Create a socket object 
+s = socket.socket()          
+  
+# Define the port on which you want to connect 
+port = 8001               
+  
+# connect to the server on local computer 
+s.connect(('127.0.0.1', port)) 
+  
+# receive data from the server 
+print(s.recv(1024)) 
+# close the connection 
+# s.close()    
