@@ -1,9 +1,18 @@
-# first of all import the socket library 
-import socket                
+# first of all import the socket library
+from socket import *
+import socket        
   
 # next create a socket object 
-s = socket.socket()          
+sock = socket.socket()          
 print("Socket successfully created")
+
+tr = 1;
+
+# kill "Address already in use" error message
+if sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1):
+    perror("setsockopt");
+    exit(1);
+
   
 # reserve a port on your computer in our 
 # case it is 12345 but it can be anything 
@@ -14,23 +23,26 @@ port = 8001
 # instead we have inputted an empty string 
 # this makes the server listen to requests  
 # coming from other computers on the network 
-s.bind(('', port))         
-print("socket binded to %s" %(port))
+sock.bind(('', port))         
+print("server socket binded to %s" %(port))
   
 # put the socket into listening mode 
-s.listen(5)      
-print("socket is listening")   
+sock.listen(5)      
+print("server is listening")   
   
 # a forever loop until we interrupt it or  
 # an error occurs 
 while True: 
   
-   # Establish connection with client. 
-   c, addr = s.accept()      
-   print('Got connection from', addr)
+    # Establish connection with client.
+    client, addr = sock.accept()      
+    print('Got connection from', addr)
   
-   # send a thank you message to the client.  
-   c.send(b'Thank you for connecting') 
-  
-   # Close the connection with the client 
-   c.close() 
+    # send a thank you message to the client.  
+    client.send(b'Thank you for connecting') 
+
+    if KeyboardInterrupt:
+        [client.connection.close() for client in sock.client_pool if len(sock.client_pool)]
+        # sys.exit()
+        # Close the connection with the client 
+        client.close() 
